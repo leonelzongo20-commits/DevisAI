@@ -1,0 +1,637 @@
+<!DOCTYPE html>
+<html lang="fr">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>DevisAI — Rejoignez la liste d'attente</title>
+<link href="https://fonts.googleapis.com/css2?family=Bricolage+Grotesque:wght@400;500;600;700;800&family=Instrument+Sans:ital,wght@0,300;0,400;0,500;1,400&display=swap" rel="stylesheet">
+<style>
+  :root {
+    --bg: #0a0a0d;
+    --surface: #111116;
+    --border: rgba(255,255,255,0.07);
+    --text: #f0ede8;
+    --muted: rgba(240,237,232,0.45);
+    --accent: #f97316;
+    --accent2: #fb923c;
+    --green: #22c55e;
+    --blue: #3b82f6;
+  }
+
+  * { margin: 0; padding: 0; box-sizing: border-box; }
+
+  body {
+    background: var(--bg);
+    color: var(--text);
+    font-family: 'Instrument Sans', sans-serif;
+    min-height: 100vh;
+    overflow-x: hidden;
+  }
+
+  /* BACKGROUND EFFECTS */
+  .bg-glow {
+    position: fixed;
+    pointer-events: none;
+    z-index: 0;
+  }
+  .bg-glow-1 {
+    top: -20%;
+    left: -10%;
+    width: 600px;
+    height: 600px;
+    background: radial-gradient(circle, rgba(249,115,22,0.12) 0%, transparent 70%);
+  }
+  .bg-glow-2 {
+    bottom: -20%;
+    right: -10%;
+    width: 500px;
+    height: 500px;
+    background: radial-gradient(circle, rgba(59,130,246,0.08) 0%, transparent 70%);
+  }
+
+  /* LANG SWITCHER */
+  .lang-bar {
+    position: fixed;
+    top: 1.2rem;
+    right: 1.5rem;
+    z-index: 100;
+    display: flex;
+    gap: 0.3rem;
+    background: rgba(255,255,255,0.05);
+    border: 1px solid var(--border);
+    border-radius: 20px;
+    padding: 0.3rem;
+    backdrop-filter: blur(12px);
+  }
+
+  .lang-btn {
+    padding: 0.35rem 0.9rem;
+    border-radius: 16px;
+    border: none;
+    background: transparent;
+    color: var(--muted);
+    font-family: 'Instrument Sans', sans-serif;
+    font-size: 0.8rem;
+    font-weight: 600;
+    cursor: pointer;
+    transition: all 0.2s;
+  }
+
+  .lang-btn.active {
+    background: var(--accent);
+    color: white;
+  }
+
+  /* MAIN */
+  main {
+    position: relative;
+    z-index: 1;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+    min-height: 100vh;
+    padding: 4rem 1.5rem;
+    text-align: center;
+  }
+
+  /* BADGE */
+  .badge {
+    display: inline-flex;
+    align-items: center;
+    gap: 0.5rem;
+    background: rgba(249,115,22,0.12);
+    border: 1px solid rgba(249,115,22,0.25);
+    border-radius: 20px;
+    padding: 0.4rem 1rem;
+    font-size: 0.78rem;
+    font-weight: 600;
+    color: var(--accent2);
+    letter-spacing: 0.05em;
+    margin-bottom: 2rem;
+    animation: fadeDown 0.6s ease forwards;
+  }
+
+  .badge-dot {
+    width: 6px;
+    height: 6px;
+    background: var(--green);
+    border-radius: 50%;
+    animation: pulse 1.5s infinite;
+  }
+
+  @keyframes pulse {
+    0%, 100% { opacity: 1; transform: scale(1); }
+    50% { opacity: 0.5; transform: scale(0.7); }
+  }
+
+  /* HERO TEXT */
+  h1 {
+    font-family: 'Bricolage Grotesque', sans-serif;
+    font-size: clamp(2.8rem, 6vw, 5rem);
+    font-weight: 800;
+    line-height: 1.05;
+    letter-spacing: -0.03em;
+    max-width: 800px;
+    margin-bottom: 1.5rem;
+    animation: fadeUp 0.7s ease 0.1s both;
+  }
+
+  h1 .highlight {
+    background: linear-gradient(135deg, var(--accent), var(--accent2));
+    -webkit-background-clip: text;
+    -webkit-text-fill-color: transparent;
+    background-clip: text;
+  }
+
+  .subtitle {
+    font-size: clamp(1rem, 2vw, 1.2rem);
+    color: var(--muted);
+    max-width: 560px;
+    line-height: 1.6;
+    margin-bottom: 3rem;
+    font-weight: 300;
+    animation: fadeUp 0.7s ease 0.2s both;
+  }
+
+  /* FORM */
+  .waitlist-form {
+    display: flex;
+    gap: 0.6rem;
+    max-width: 480px;
+    width: 100%;
+    margin-bottom: 1.2rem;
+    animation: fadeUp 0.7s ease 0.3s both;
+  }
+
+  .email-input {
+    flex: 1;
+    background: rgba(255,255,255,0.05);
+    border: 1.5px solid var(--border);
+    border-radius: 10px;
+    padding: 0.9rem 1.2rem;
+    color: var(--text);
+    font-family: 'Instrument Sans', sans-serif;
+    font-size: 0.95rem;
+    outline: none;
+    transition: all 0.2s;
+  }
+
+  .email-input::placeholder { color: var(--muted); }
+
+  .email-input:focus {
+    border-color: var(--accent);
+    background: rgba(249,115,22,0.05);
+    box-shadow: 0 0 0 3px rgba(249,115,22,0.1);
+  }
+
+  .submit-btn {
+    background: var(--accent);
+    color: white;
+    border: none;
+    border-radius: 10px;
+    padding: 0.9rem 1.5rem;
+    font-family: 'Bricolage Grotesque', sans-serif;
+    font-size: 0.9rem;
+    font-weight: 700;
+    cursor: pointer;
+    white-space: nowrap;
+    transition: all 0.2s;
+    display: flex;
+    align-items: center;
+    gap: 0.4rem;
+  }
+
+  .submit-btn:hover {
+    background: #ea6700;
+    transform: translateY(-1px);
+    box-shadow: 0 8px 25px rgba(249,115,22,0.4);
+  }
+
+  .submit-btn:active { transform: translateY(0); }
+
+  .form-note {
+    font-size: 0.75rem;
+    color: var(--muted);
+    animation: fadeUp 0.7s ease 0.35s both;
+  }
+
+  /* SUCCESS */
+  .success-msg {
+    display: none;
+    flex-direction: column;
+    align-items: center;
+    gap: 0.8rem;
+    animation: popIn 0.5s cubic-bezier(0.34,1.56,0.64,1);
+    max-width: 480px;
+    width: 100%;
+  }
+
+  .success-msg.show { display: flex; }
+
+  @keyframes popIn {
+    from { transform: scale(0.8); opacity: 0; }
+    to { transform: scale(1); opacity: 1; }
+  }
+
+  .success-icon {
+    font-size: 3rem;
+  }
+
+  .success-title {
+    font-family: 'Bricolage Grotesque', sans-serif;
+    font-size: 1.4rem;
+    font-weight: 800;
+    color: var(--green);
+  }
+
+  .success-sub {
+    font-size: 0.9rem;
+    color: var(--muted);
+    line-height: 1.5;
+  }
+
+  .share-btns {
+    display: flex;
+    gap: 0.6rem;
+    margin-top: 0.5rem;
+    flex-wrap: wrap;
+    justify-content: center;
+  }
+
+  .share-btn {
+    padding: 0.5rem 1.1rem;
+    border-radius: 8px;
+    border: 1px solid var(--border);
+    background: rgba(255,255,255,0.04);
+    color: var(--muted);
+    font-size: 0.8rem;
+    font-weight: 600;
+    cursor: pointer;
+    transition: all 0.2s;
+    font-family: 'Instrument Sans', sans-serif;
+  }
+
+  .share-btn:hover {
+    border-color: var(--accent);
+    color: var(--accent);
+    background: rgba(249,115,22,0.06);
+  }
+
+  /* COUNTER */
+  .counter-section {
+    margin: 3rem 0 2rem;
+    animation: fadeUp 0.7s ease 0.4s both;
+  }
+
+  .counter-num {
+    font-family: 'Bricolage Grotesque', sans-serif;
+    font-size: 3rem;
+    font-weight: 800;
+    color: var(--text);
+    line-height: 1;
+    margin-bottom: 0.3rem;
+  }
+
+  .counter-num span {
+    color: var(--accent);
+  }
+
+  .counter-label {
+    font-size: 0.82rem;
+    color: var(--muted);
+  }
+
+  .avatars {
+    display: flex;
+    justify-content: center;
+    margin-bottom: 0.6rem;
+  }
+
+  .avatar {
+    width: 32px;
+    height: 32px;
+    border-radius: 50%;
+    border: 2px solid var(--bg);
+    margin-left: -8px;
+    font-size: 0.8rem;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    font-weight: 700;
+  }
+
+  .avatar:first-child { margin-left: 0; }
+
+  /* FEATURES */
+  .features {
+    display: flex;
+    gap: 1rem;
+    margin-top: 3.5rem;
+    flex-wrap: wrap;
+    justify-content: center;
+    max-width: 700px;
+    animation: fadeUp 0.7s ease 0.5s both;
+  }
+
+  .feature-pill {
+    display: flex;
+    align-items: center;
+    gap: 0.5rem;
+    background: rgba(255,255,255,0.04);
+    border: 1px solid var(--border);
+    border-radius: 20px;
+    padding: 0.5rem 1rem;
+    font-size: 0.82rem;
+    color: var(--muted);
+    transition: all 0.2s;
+  }
+
+  .feature-pill:hover {
+    border-color: rgba(255,255,255,0.15);
+    color: var(--text);
+  }
+
+  .feature-pill span { font-size: 1rem; }
+
+  /* MÉTIERS SCROLL */
+  .metiers-section {
+    margin-top: 4rem;
+    width: 100%;
+    overflow: hidden;
+    animation: fadeUp 0.7s ease 0.6s both;
+  }
+
+  .metiers-label {
+    font-size: 0.72rem;
+    font-weight: 600;
+    letter-spacing: 0.15em;
+    text-transform: uppercase;
+    color: rgba(240,237,232,0.25);
+    margin-bottom: 1rem;
+  }
+
+  .metiers-track {
+    display: flex;
+    gap: 0.8rem;
+    animation: scroll 20s linear infinite;
+    width: max-content;
+  }
+
+  .metiers-wrapper {
+    overflow: hidden;
+    mask: linear-gradient(90deg, transparent, black 10%, black 90%, transparent);
+  }
+
+  @keyframes scroll {
+    from { transform: translateX(0); }
+    to { transform: translateX(-50%); }
+  }
+
+  .metier-tag {
+    background: rgba(255,255,255,0.04);
+    border: 1px solid var(--border);
+    border-radius: 6px;
+    padding: 0.4rem 0.9rem;
+    font-size: 0.8rem;
+    color: var(--muted);
+    white-space: nowrap;
+  }
+
+  /* FOOTER */
+  footer {
+    margin-top: 4rem;
+    font-size: 0.75rem;
+    color: rgba(240,237,232,0.2);
+    animation: fadeUp 0.7s ease 0.7s both;
+  }
+
+  footer a { color: rgba(240,237,232,0.35); text-decoration: none; }
+
+  /* ANIMATIONS */
+  @keyframes fadeUp {
+    from { opacity: 0; transform: translateY(20px); }
+    to { opacity: 1; transform: translateY(0); }
+  }
+
+  @keyframes fadeDown {
+    from { opacity: 0; transform: translateY(-10px); }
+    to { opacity: 1; transform: translateY(0); }
+  }
+
+  @media (max-width: 600px) {
+    .waitlist-form { flex-direction: column; }
+    .submit-btn { justify-content: center; }
+    h1 { font-size: 2.5rem; }
+  }
+</style>
+</head>
+<body>
+
+<div class="bg-glow bg-glow-1"></div>
+<div class="bg-glow bg-glow-2"></div>
+
+<!-- LANG SWITCHER -->
+<div class="lang-bar">
+  <button class="lang-btn active" onclick="setLang('fr')">🇫🇷 FR</button>
+  <button class="lang-btn" onclick="setLang('en')">🇬🇧 EN</button>
+  <button class="lang-btn" onclick="setLang('es')">🇪🇸 ES</button>
+</div>
+
+<main>
+
+  <!-- BADGE -->
+  <div class="badge">
+    <div class="badge-dot"></div>
+    <span class="t" data-fr="Bientôt disponible · Rejoignez la bêta" data-en="Coming soon · Join the beta" data-es="Próximamente · Únete a la beta">Bientôt disponible · Rejoignez la bêta</span>
+  </div>
+
+  <!-- TITLE -->
+  <h1>
+    <span class="t" data-fr="Vos devis en" data-en="Your quotes in" data-es="Tus presupuestos en">Vos devis en</span>
+    <span class="highlight"> 2 minutes</span><br>
+    <span class="t" data-fr="grâce à l'IA" data-en="powered by AI" data-es="con IA">grâce à l'IA</span>
+  </h1>
+
+  <!-- SUBTITLE -->
+  <p class="subtitle t"
+    data-fr="DevisAI génère des devis professionnels pour tous les métiers — plombier, électricien, consultant, jardinier et plus encore. Quel que soit votre pays."
+    data-en="DevisAI generates professional quotes for any trade — plumber, electrician, consultant, gardener and more. No matter where you are."
+    data-es="DevisAI genera presupuestos profesionales para todos los oficios — fontanero, electricista, consultor, jardinero y más. En cualquier país.">
+    DevisAI génère des devis professionnels pour tous les métiers — plombier, électricien, consultant, jardinier et plus encore. Quel que soit votre pays.
+  </p>
+
+  <!-- FORM -->
+  <div class="waitlist-form" id="waitlistForm">
+    <input type="email" class="email-input t-placeholder" id="emailInput"
+      data-placeholder-fr="votre@email.com"
+      data-placeholder-en="your@email.com"
+      data-placeholder-es="tu@email.com"
+      placeholder="votre@email.com" />
+    <button class="submit-btn" onclick="submitEmail()">
+      <span class="t" data-fr="Rejoindre →" data-en="Join now →" data-es="Unirse →">Rejoindre →</span>
+    </button>
+  </div>
+
+  <p class="form-note t"
+    data-fr="🔒 Gratuit · Aucune carte bancaire · Vous serez parmi les premiers informés"
+    data-en="🔒 Free · No credit card · You'll be among the first to know"
+    data-es="🔒 Gratis · Sin tarjeta · Serás de los primeros en saberlo">
+    🔒 Gratuit · Aucune carte bancaire · Vous serez parmi les premiers informés
+  </p>
+
+  <!-- SUCCESS -->
+  <div class="success-msg" id="successMsg">
+    <div class="success-icon">🎉</div>
+    <div class="success-title t" data-fr="Vous êtes sur la liste !" data-en="You're on the list!" data-es="¡Estás en la lista!">Vous êtes sur la liste !</div>
+    <div class="success-sub t"
+      data-fr="On vous préviendra en avant-première dès que DevisAI est prêt. Partagez pour monter dans la file !"
+      data-en="We'll notify you first when DevisAI is ready. Share to move up the waitlist!"
+      data-es="Te avisaremos primero cuando DevisAI esté listo. ¡Comparte para subir en la lista!">
+      On vous préviendra en avant-première dès que DevisAI est prêt. Partagez pour monter dans la file !
+    </div>
+    <div class="share-btns">
+      <button class="share-btn" onclick="shareTwitter()">𝕏 Twitter</button>
+      <button class="share-btn" onclick="shareWhatsApp()">💬 WhatsApp</button>
+      <button class="share-btn" onclick="shareLinkedIn()">💼 LinkedIn</button>
+    </div>
+  </div>
+
+  <!-- COUNTER -->
+  <div class="counter-section">
+    <div class="avatars">
+      <div class="avatar" style="background:#f97316">JD</div>
+      <div class="avatar" style="background:#3b82f6">AM</div>
+      <div class="avatar" style="background:#22c55e">PL</div>
+      <div class="avatar" style="background:#a855f7">SR</div>
+      <div class="avatar" style="background:#ef4444">KM</div>
+    </div>
+    <div class="counter-num"><span id="counter">247</span>+</div>
+    <div class="counter-label t"
+      data-fr="professionnels déjà inscrits"
+      data-en="professionals already registered"
+      data-es="profesionales ya inscritos">
+      professionnels déjà inscrits
+    </div>
+  </div>
+
+  <!-- FEATURES -->
+  <div class="features">
+    <div class="feature-pill"><span>⚡</span> <span class="t" data-fr="Devis en 2 min" data-en="Quote in 2 min" data-es="Presupuesto en 2 min">Devis en 2 min</span></div>
+    <div class="feature-pill"><span>🌍</span> <span class="t" data-fr="12 langues" data-en="12 languages" data-es="12 idiomas">12 langues</span></div>
+    <div class="feature-pill"><span>🔧</span> <span class="t" data-fr="Tous les métiers" data-en="All trades" data-es="Todos los oficios">Tous les métiers</span></div>
+    <div class="feature-pill"><span>📄</span> <span class="t" data-fr="Export PDF" data-en="PDF Export" data-es="Exportar PDF">Export PDF</span></div>
+    <div class="feature-pill"><span>🤖</span> <span class="t" data-fr="Généré par IA" data-en="AI-powered" data-es="Impulsado por IA">Généré par IA</span></div>
+    <div class="feature-pill"><span>💶</span> <span class="t" data-fr="Prix adaptés par pays" data-en="Localized pricing" data-es="Precios locales">Prix adaptés par pays</span></div>
+  </div>
+
+  <!-- MÉTIERS SCROLL -->
+  <div class="metiers-section">
+    <div class="metiers-label t" data-fr="Fonctionne pour tous les métiers" data-en="Works for every trade" data-es="Funciona para todos los oficios">Fonctionne pour tous les métiers</div>
+    <div class="metiers-wrapper">
+      <div class="metiers-track" id="metierTrack">
+        <!-- Filled by JS -->
+      </div>
+    </div>
+  </div>
+
+  <footer>
+    <span class="t" data-fr="© 2025 DevisAI · " data-en="© 2025 DevisAI · " data-es="© 2025 DevisAI · ">© 2025 DevisAI · </span>
+    <a href="#" class="t" data-fr="Confidentialité" data-en="Privacy" data-es="Privacidad">Confidentialité</a>
+    &nbsp;·&nbsp;
+    <a href="mailto:hello@devisai.com">hello@devisai.com</a>
+  </footer>
+
+</main>
+
+<script>
+  let currentLang = 'fr';
+
+  const metiersFR = ['🚿 Plombier','⚡ Électricien','🧱 Maçon','🖌️ Peintre','🌿 Jardinier','💼 Consultant','🚗 Mécanicien','🪚 Menuisier','🔲 Carreleur','📸 Photographe','💻 Développeur','🏗️ Charpentier','🔑 Serrurier','🧹 Nettoyage','🌊 Pisciniste','📐 Architecte'];
+  const metiersEN = ['🚿 Plumber','⚡ Electrician','🧱 Mason','🖌️ Painter','🌿 Gardener','💼 Consultant','🚗 Mechanic','🪚 Carpenter','🔲 Tiler','📸 Photographer','💻 Developer','🏗️ Roofer','🔑 Locksmith','🧹 Cleaning','🌊 Pool tech','📐 Architect'];
+  const metiersES = ['🚿 Fontanero','⚡ Electricista','🧱 Albañil','🖌️ Pintor','🌿 Jardinero','💼 Consultor','🚗 Mecánico','🪚 Carpintero','🔲 Alicatador','📸 Fotógrafo','💻 Desarrollador','🏗️ Carpintero','🔑 Cerrajero','🧹 Limpieza','🌊 Piscinero','📐 Arquitecto'];
+
+  function buildMetiers(list) {
+    const track = document.getElementById('metierTrack');
+    const doubled = [...list, ...list];
+    track.innerHTML = doubled.map(m => `<div class="metier-tag">${m}</div>`).join('');
+  }
+
+  function setLang(lang) {
+    currentLang = lang;
+    document.querySelectorAll('.lang-btn').forEach(b => b.classList.remove('active'));
+    document.querySelectorAll('.lang-btn').forEach(b => {
+      if (b.textContent.includes(lang.toUpperCase())) b.classList.add('active');
+    });
+    document.querySelectorAll('.t').forEach(el => {
+      const val = el.getAttribute('data-' + lang);
+      if (val) el.textContent = val;
+    });
+    document.querySelectorAll('.t-placeholder').forEach(el => {
+      const val = el.getAttribute('data-placeholder-' + lang);
+      if (val) el.placeholder = val;
+    });
+    const metiers = lang === 'fr' ? metiersFR : lang === 'en' ? metiersEN : metiersES;
+    buildMetiers(metiers);
+    document.documentElement.lang = lang;
+  }
+
+  // Counter animation
+  function animateCounter(target) {
+    let current = 0;
+    const step = Math.ceil(target / 60);
+    const el = document.getElementById('counter');
+    const interval = setInterval(() => {
+      current = Math.min(current + step, target);
+      el.textContent = current;
+      if (current >= target) clearInterval(interval);
+    }, 20);
+  }
+
+  function submitEmail() {
+    const email = document.getElementById('emailInput').value.trim();
+    if (!email || !email.includes('@')) {
+      document.getElementById('emailInput').style.borderColor = '#ef4444';
+      document.getElementById('emailInput').style.boxShadow = '0 0 0 3px rgba(239,68,68,0.15)';
+      setTimeout(() => {
+        document.getElementById('emailInput').style.borderColor = '';
+        document.getElementById('emailInput').style.boxShadow = '';
+      }, 2000);
+      return;
+    }
+    document.getElementById('waitlistForm').style.display = 'none';
+    document.querySelector('.form-note').style.display = 'none';
+    document.getElementById('successMsg').classList.add('show');
+    // Increment counter
+    const curr = parseInt(document.getElementById('counter').textContent);
+    document.getElementById('counter').textContent = curr + 1;
+  }
+
+  function shareTwitter() {
+    const msgs = {
+      fr: "Je viens de rejoindre la liste d'attente de @DevisAI — l'IA qui génère des devis professionnels en 2 minutes pour tous les métiers ! 🚀",
+      en: "Just joined the waitlist for @DevisAI — the AI that generates professional quotes in 2 minutes for any trade! 🚀",
+      es: "Acabo de unirme a la lista de espera de @DevisAI — ¡la IA que genera presupuestos profesionales en 2 minutos! 🚀"
+    };
+    window.open('https://twitter.com/intent/tweet?text=' + encodeURIComponent(msgs[currentLang]));
+  }
+
+  function shareWhatsApp() {
+    const msgs = {
+      fr: "Tu connais DevisAI ? Une IA qui génère des devis pro en 2 min pour tous les métiers. Rejoint la liste d'attente !",
+      en: "Have you heard of DevisAI? An AI that generates professional quotes in 2 min for any trade. Join the waitlist!",
+      es: "¿Conoces DevisAI? Una IA que genera presupuestos profesionales en 2 min para todos los oficios. ¡Únete!"
+    };
+    window.open('https://wa.me/?text=' + encodeURIComponent(msgs[currentLang]));
+  }
+
+  function shareLinkedIn() {
+    window.open('https://www.linkedin.com/sharing/share-offsite/?url=https://devisai.com');
+  }
+
+  // Init
+  buildMetiers(metiersFR);
+  animateCounter(247);
+</script>
+</body>
+</html>
