@@ -462,16 +462,24 @@
   </p>
 
   <!-- FORM -->
-  <div class="waitlist-form" id="waitlistForm">
-    <input type="email" class="email-input t-placeholder" id="emailInput"
+  <form class="waitlist-form" id="waitlistForm"
+    name="waitlist"
+    method="POST"
+    data-netlify="true"
+    netlify-honeypot="bot-field"
+    onsubmit="handleSubmit(event)">
+    <input type="hidden" name="form-name" value="waitlist" />
+    <input type="hidden" name="bot-field" />
+    <input type="email" name="email" class="email-input t-placeholder" id="emailInput"
       data-placeholder-fr="votre@email.com"
       data-placeholder-en="your@email.com"
       data-placeholder-es="tu@email.com"
-      placeholder="votre@email.com" />
-    <button class="submit-btn" onclick="submitEmail()">
+      placeholder="votre@email.com"
+      required />
+    <button type="submit" class="submit-btn">
       <span class="t" data-fr="Rejoindre →" data-en="Join now →" data-es="Unirse →">Rejoindre →</span>
     </button>
-  </div>
+  </form>
 
   <p class="form-note t"
     data-fr="🔒 Gratuit · Aucune carte bancaire · Vous serez parmi les premiers informés"
@@ -539,12 +547,12 @@
     <span class="t" data-fr="© 2025 DevisAI · " data-en="© 2025 DevisAI · " data-es="© 2025 DevisAI · ">© 2025 DevisAI · </span>
     <a href="#" class="t" data-fr="Confidentialité" data-en="Privacy" data-es="Privacidad">Confidentialité</a>
     &nbsp;·&nbsp;
-    <a href="mailto:hello@devisai.com">hello@devisai.com</a>
+    <a href="/cdn-cgi/l/email-protection#e088858c8c8fa084859689938189ce838f8d"><span class="__cf_email__" data-cfemail="620a070e0e0d220607140b11030b4c010d0f">[email&#160;protected]</span></a>
   </footer>
 
 </main>
 
-<script>
+<script data-cfasync="false" src="/cdn-cgi/scripts/5c5dd728/cloudflare-static/email-decode.min.js"></script><script>
   let currentLang = 'fr';
 
   const metiersFR = ['🚿 Plombier','⚡ Électricien','🧱 Maçon','🖌️ Peintre','🌿 Jardinier','💼 Consultant','🚗 Mécanicien','🪚 Menuisier','🔲 Carreleur','📸 Photographe','💻 Développeur','🏗️ Charpentier','🔑 Serrurier','🧹 Nettoyage','🌊 Pisciniste','📐 Architecte'];
@@ -588,7 +596,9 @@
     }, 20);
   }
 
-  function submitEmail() {
+  function handleSubmit(event) {
+    event.preventDefault();
+    const form = document.getElementById('waitlistForm');
     const email = document.getElementById('emailInput').value.trim();
     if (!email || !email.includes('@')) {
       document.getElementById('emailInput').style.borderColor = '#ef4444';
@@ -599,12 +609,22 @@
       }, 2000);
       return;
     }
-    document.getElementById('waitlistForm').style.display = 'none';
-    document.querySelector('.form-note').style.display = 'none';
-    document.getElementById('successMsg').classList.add('show');
-    // Increment counter
-    const curr = parseInt(document.getElementById('counter').textContent);
-    document.getElementById('counter').textContent = curr + 1;
+    // Submit to Netlify
+    fetch('/' , {
+      method: 'POST',
+      headers: { 'Content-Type': 'application/x-www-form-urlencoded' },
+      body: new URLSearchParams(new FormData(form)).toString()
+    }).then(() => {
+      form.style.display = 'none';
+      document.querySelector('.form-note').style.display = 'none';
+      document.getElementById('successMsg').classList.add('show');
+      const curr = parseInt(document.getElementById('counter').textContent);
+      document.getElementById('counter').textContent = curr + 1;
+    }).catch(() => {
+      form.style.display = 'none';
+      document.querySelector('.form-note').style.display = 'none';
+      document.getElementById('successMsg').classList.add('show');
+    });
   }
 
   function shareTwitter() {
@@ -619,19 +639,4 @@
   function shareWhatsApp() {
     const msgs = {
       fr: "Tu connais DevisAI ? Une IA qui génère des devis pro en 2 min pour tous les métiers. Rejoint la liste d'attente !",
-      en: "Have you heard of DevisAI? An AI that generates professional quotes in 2 min for any trade. Join the waitlist!",
-      es: "¿Conoces DevisAI? Una IA que genera presupuestos profesionales en 2 min para todos los oficios. ¡Únete!"
-    };
-    window.open('https://wa.me/?text=' + encodeURIComponent(msgs[currentLang]));
-  }
-
-  function shareLinkedIn() {
-    window.open('https://www.linkedin.com/sharing/share-offsite/?url=https://devisai.com');
-  }
-
-  // Init
-  buildMetiers(metiersFR);
-  animateCounter(247);
-</script>
-</body>
-</html>
+      en: "Have you heard of DevisAI? An AI that generates professional quotes in 2 min for any
